@@ -30,37 +30,41 @@ class BruteRuleset {
           } else if (mode === "n") {
             return "A mode must be selected (p/c) before entering a number";
           } else return;
+          continue;
+        default:
           break;
+      }
+
+      if (templist.length > 0) {
+        list = templist;
+        templist = [];
+      }
+
+      switch(i) {
         case "b":
-          list = list.concat(templist);
-          templist = [];
           list = list.map((x) => [x, x.toLowerCase(), x.toUpperCase()]).flat();
           break;
         case "u":
-          list = list.concat(templist);
-          templist = [];
           list = list.map((x) => [x, x.toUpperCase()]).flat();
           break;
         case "l":
-          list = list.concat(templist);
-          templist = [];
           list = list.map((x) => [x, x.toLowerCase()]).flat();
           break;
         case "p":
-          list = list.concat(templist);
-          templist = [];
           mode = "p";
           break;
         case "c":
-          list = list.concat(templist);
-          templist = [];
           mode = "c";
           break;
         default:
           return "There's no rule associated with " + i;
       }
     }
-    list = list.concat(templist);
+
+    if (templist.length > 0) {
+      list = templist;
+      templist = [];
+    }
 
     return list;
   }
