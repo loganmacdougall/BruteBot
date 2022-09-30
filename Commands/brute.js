@@ -9,6 +9,7 @@ const bruteHelpString = {
   rules:
     "$brute rules {ruleset}: sets the rules to be applied on the wordlist [p(erm)d, c(omb)d, u(upper), l(ower), b(oth)]",
   info: "$brute info: returns all data currently set",
+  send: "$brute send {form/data}: will set how the data should be sent",
   wordlist: `$brute wordlist {Type/File/URL} {...words/file.txt/URL to text file}: Sets/Displays the wordlist\n
 $brute wordlist display: will display the current wordlist`,
   try: "$brute try {password}: will try the password specified",

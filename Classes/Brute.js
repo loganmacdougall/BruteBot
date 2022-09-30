@@ -120,6 +120,7 @@ class Brute {
   data = null;
   form_data = null;
   password_field = null;
+  send_format = "data";
 
   rules = new BruteRuleset("");
   wordlist = [];
@@ -177,6 +178,31 @@ class Brute {
       (oldRules.ruleset || "*none*") +
       " to " +
       (this.rules.ruleset || "*none*")
+    );
+  }
+
+  set_send_format(format) {
+    let oldSendFormat = this.send_format;
+    let newSendFormat = null;
+    switch (format) {
+      case "form":
+      case "data":
+        newSendFormat = format;
+        break;
+      default:
+        break;
+    }
+
+    if (newSendFormat === null) {
+      return "You must select a valid format";
+    }
+
+    this.send_format = newSendFormat;
+    return (
+      "Brute: Changed send format from " +
+      oldSendFormat +
+      " to " +
+      newSendFormat
     );
   }
 
@@ -346,6 +372,15 @@ class Brute {
 
   async test_password(password, message) {
     this.form_data.set(this.password_field, password);
+
+    let dataToSend = {
+      method: "POST",
+      body: this.form_data,
+    };
+    if (this.send_format === "form") {
+      dataToSend["Content-Type"] = "application/x-www-form-urlencoded";
+    }
+
     let response = undefined;
     try {
       response = await fetch(this.url, {
@@ -375,6 +410,7 @@ class Brute {
     let theInfo = "url: " + (this.url || "*none*");
     theInfo += "\ndata: " + (this.data ? JSON.stringify(this.data) : "*none*");
     theInfo += "\nfield: " + (this.password_field || "*none*");
+    theInfo += "\nsend format: " + this.send_format;
     theInfo += "\nrules: " + (this.rules.ruleset || "*none*");
     theInfo += "\nwordlist:\n";
     if (this.wordlist.length === 0) {
