@@ -39,7 +39,7 @@ module.exports = {
     if (command == "url") {
       displayResult(brute.set_url(args[0]), command, message);
     } else if (command === "data") {
-      displayResult(brute.set_data(args.join("")), command, message);
+      displayResult(brute.set_data(args.join(" ")), command, message);
     } else if (command === "field") {
       displayResult(brute.set_field(args[0] || ""), command, message);
     } else if (command === "rules") {
