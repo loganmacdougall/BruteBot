@@ -40,7 +40,7 @@ class BruteRuleset {
         templist = [];
       }
 
-      switch(i) {
+      switch (i) {
         case "b":
           list = list.map((x) => [x, x.toLowerCase(), x.toUpperCase()]).flat();
           break;
@@ -241,6 +241,7 @@ class Brute {
           message.channel.send("Attempting to download wordlist");
           const response = await axios.get(args[0]);
           this.wordlist = response.data.split(/\n+/);
+          this.wordlist = this.wordlist.map((word) => word.trim());
           message.channel.send(
             "The wordlist has been set to the text at the provided URL"
           );
@@ -265,6 +266,7 @@ class Brute {
           message.channel.send("Attempting to download wordlist");
           const response = await axios.get(message.attachments.first().url);
           this.wordlist = response.data.split(/\n+/);
+          this.wordlist = this.wordlist.map((word) => word.trim());
           message.channel.send(
             "The wordlist has been set to the text in the provided file"
           );
