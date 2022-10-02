@@ -71,7 +71,7 @@ class BruteRuleset {
 }
 
 class BruteListController {
-  index = 0;
+  index = -1;
   time = 0;
   list = [];
 
@@ -82,7 +82,7 @@ class BruteListController {
 
   next() {
     this.index++;
-    return this.list[this.index - 1];
+    return this.list[this.index];
   }
 
   status() {
@@ -215,17 +215,52 @@ class Brute {
       if (this.wordlist.length === 0) {
         return "The wordlist is empty";
       }
-      let str_wordlist = "```\n";
-      if (this.wordlist.length <= 100) {
-        str_wordlist += this.wordlist.join(", ");
+      let str_wordlist = "";
+      if (isNaN(args[0])) {
+        str_wordlist = "```\n";
+        if (this.wordlist.length <= 100) {
+          str_wordlist += this.wordlist.join(", ");
+        } else {
+          str_wordlist +=
+            this.wordlist.slice(0, 100).join(", ") +
+            "... " +
+            (this.wordlist.length - 100) +
+            " more";
+        }
+        str_wordlist += "```";
       } else {
-        str_wordlist +=
-          this.wordlist.slice(0, 100).join(", ") +
-          "... " +
-          (this.wordlist.length - 100) +
-          " more";
+        let i = parseInt(args[0]);
+        let possible_passwords = this.rules.generateList(this.wordlist);
+        if (typeof possible_passwords === "string") {
+          return "Error generating the password list";
+        }
+        if (i >= possible_passwords.length) {
+          return (
+            i +
+            " is greater than " +
+            (possible_passwords.length - 1) +
+            ". Invalid range"
+          );
+        }
+        if (i < 0) {
+          return i + " is less than 0. Invalid range";
+        }
+        if (i >= 2) {
+          str_wordlist += `\`${i - 2}: ${possible_passwords[i - 2]}\`\n\`${
+            i - 1
+          }: ${possible_passwords[i - 1]}\`\n`;
+        } else if (i == 1) {
+          str_wordlist += `\`${i - 1}: ${possible_passwords[i - 1]}\`\n`;
+        }
+        str_wordlist += `> \`${i}: ${possible_passwords[i]}\``;
+        if (i <= possible_passwords.length - 3) {
+          str_wordlist += `\n\`${i + 1}: ${possible_passwords[i + 1]}\`\n\`${
+            i + 2
+          }: ${possible_passwords[i + 2]}\``;
+        } else if (i == possible_passwords.length - 2) {
+          str_wordlist += `\n\`${i + 1}: ${possible_passwords[i + 1]}\``;
+        }
       }
-      str_wordlist += "```";
 
       return str_wordlist;
     }
@@ -339,7 +374,11 @@ class Brute {
         password !== undefined && this.running == true;
         password = this.listController.next()
       ) {
-        let found = await this.test_password(password, message);
+        let found = await this.test_password(
+          password,
+          message,
+          this.listController.index
+        );
         if (found === null) break;
         if (found) {
           message.channel.send(
@@ -376,7 +415,7 @@ class Brute {
     return this.listController.status();
   }
 
-  async test_password(password, message) {
+  async test_password(password, message, index = -1) {
     this.form_data.set(this.password_field, password);
 
     let dataToSend = {
@@ -402,12 +441,16 @@ class Brute {
     } else if (response.status === 403) {
       return false;
     } else {
-      message.channel.send(
+      let errorMessage =
         "Error: Status code " +
-          response.status +
-          " unexpected: " +
-          response.statusText
-      );
+        response.status +
+        " unexpected: " +
+        response.statusText +
+        `\nStopped at \`${password}\``;
+      if (index !== -1) {
+        errorMessage += ` (index \`${index}\`)`;
+      }
+      message.channel.send(errorMessage);
       return null;
     }
   }

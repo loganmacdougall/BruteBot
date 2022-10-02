@@ -10,7 +10,7 @@ const bruteHelpString = {
     "$brute rules {ruleset}: sets the rules to be applied on the wordlist [p(erm)d, c(omb)d, u(upper), l(ower), b(oth)]",
   info: "$brute info: returns all data currently set",
   send: "$brute send {form/data}: will set how the data should be sent",
-  wordlist: `$brute wordlist {Type/File/URL} {...words/file.txt/URL to text file}: Sets the wordlist\n$brute wordlist display: will display the current wordlist`,
+  wordlist: `$brute wordlist {Type/File/URL} {...words/file.txt/URL to text file}: Sets the wordlist\n$brute wordlist display {index}: will display the current wordlist or will display which password is at the specified index of the complete wordlist`,
   try: "$brute try {password}: will try the password specified",
   run: "$brute run: Will start brute forcing passwords",
   stop: "$brute stop: Will stop brute force if it is running",
